@@ -122,7 +122,7 @@ call(GrainRef, Request, Timeout) ->
     ReqType = req_type(),
     do_for_ref(GrainRef, fun(_, Pid) ->
                                  try
-                                     gen_statem:call(Pid, {otel:current_span_ctx(), ReqType, Request}, Timeout)
+                                     gen_statem:call(Pid, {otel_tracer:current_span_ctx(), ReqType, Request}, Timeout)
                                  catch
                                      exit:{bad_etag, _} ->
                                          ?LOG_ERROR("at=grain_exit reason=bad_etag", []),
@@ -133,7 +133,7 @@ call(GrainRef, Request, Timeout) ->
 -spec cast(GrainRef :: erleans:grain_ref(), Request :: term()) -> Reply :: term().
 cast(GrainRef, Request) ->
     ReqType = req_type(),
-    do_for_ref(GrainRef, fun(_, Pid) -> gen_statem:cast(Pid, {otel:current_span_ctx(), ReqType, Request}) end).
+    do_for_ref(GrainRef, fun(_, Pid) -> gen_statem:cast(Pid, {otel_tracer:current_span_ctx(), ReqType, Request}) end).
 
 req_type() ->
     case get(req_type) of
